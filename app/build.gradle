@@ -8,6 +8,7 @@
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
+    id 'com.diffplug.spotless' version '8.4.0'
 }
 
 repositories {
@@ -33,4 +34,22 @@ java {
 application {
     // Define the main class for the application.
     mainClass = 'org.example.App'
+}
+
+spotless {
+    java {
+        target 'src/**/*.java'
+        googleJavaFormat()
+        importOrder()
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+
+    format 'misc', {
+        target '*.gradle', '../*.gradle', '../*.md', '../.gitignore',
+                '../gradle/*.toml', '../scripts/*.sh', '../scripts/*.bat', '../scripts/*.ps1'
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
 }

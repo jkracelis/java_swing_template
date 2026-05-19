@@ -22,6 +22,10 @@ scripts/
 ├── dev-reload.bat
 ├── dev-reload.ps1
 └── dev-reload.sh
+
+.github/workflows/
+├── build.yml
+└── formatter.yml
 ```
 
 ## Responsibilities
@@ -64,6 +68,14 @@ Contains development helper scripts.
 
 `dev-reload.bat` does the same for Windows users.
 
+### `.github/workflows/`
+
+Contains GitHub Actions workflows.
+
+`build.yml` runs the Gradle build and tests on Linux, Windows, and macOS.
+
+`formatter.yml` runs the Spotless formatter check.
+
 ## Run
 
 ```bash
@@ -93,3 +105,27 @@ This watches the project files and restarts the app when something changes, incl
 ```bash
 ./gradlew test
 ```
+
+## Build
+
+```bash
+./gradlew clean build
+```
+
+## Format
+
+This project uses Spotless with Google Java Format.
+
+Check formatting:
+
+```bash
+./gradlew spotlessCheck
+```
+
+Apply formatting:
+
+```bash
+./gradlew spotlessApply
+```
+
+GitHub Actions runs both the build and formatter checks automatically on pushes and pull requests.
