@@ -1,50 +1,83 @@
-# ☕ Java Swing + Gradle (WSL2 Setup)
+# Java Swing Desktop App Structure
 
-![demo](./docs/img/demo.png)
+This project is a Java Swing desktop application organized with a common desktop app structure. The goal is to keep startup, configuration, state, event handling, and UI code separated so the project stays easier to grow.
 
-This project demonstrates a Java Swing desktop application running on **WSL2 (Windows Subsystem for Linux)** using **Gradle** as the build system.
+## Folder Structure
 
----
+```text
+app/src/main/java/org/example/
+├── App.java
+├── config/
+│   └── AppConfig.java
+├── controller/
+│   └── MainController.java
+├── model/
+│   └── AppState.java
+└── view/
+    ├── MainWindow.java
+    └── components/
+        └── NotificationPanel.java
 
-# 🚀 Tech Stack
-
-- Java 25
-- Gradle 9
-- Swing (Java GUI toolkit)
-- WSL2 (Ubuntu on Windows 10/11)
-
----
-
-# 🧱 Project Structure
-```bash
-sample/
-├── app/
-│ └── src/main/java/org/example/App.java
-├── build.gradle
-├── settings.gradle
-├── gradlew
-├── gradlew.bat
-└── gradle/wrapper/
+scripts/
+└── dev-reload.sh
 ```
 
----
+## Responsibilities
 
-# ⚙️ Requirements
+### `App.java`
 
-## 1. Install WSL2 (Windows)
-Enable WSL and install Ubuntu.
+The application entry point. It creates the main app objects and starts the Swing UI.
 
-## 2. Install Java (inside WSL)
-```bash
-sudo apt install openjdk-25-jdk
-curl -s "https://get.sdkman.io" | bash
-sdk install gradle
-```
+### `config/`
 
----
+Contains direct application defaults and configuration values.
 
-🚀 Run the Project
-From project root:
+`AppConfig.java` currently defines the window title, button text, notification header, notification message, and notification color directly in Java.
+
+### `model/`
+
+Stores application state.
+
+`AppState.java` keeps the current UI state, such as the active notification header, message, color, and loaded config values.
+
+### `controller/`
+
+Connects the UI and state.
+
+`MainController.java` handles user actions, updates the model, and tells the view to render.
+
+### `view/`
+
+Contains Swing UI code only.
+
+`MainWindow.java` owns the main application window.
+
+`components/NotificationPanel.java` is a reusable Swing panel that renders a bottom-left popup-style notification with a header, message body, and color.
+
+### `scripts/`
+
+Contains development helper scripts.
+
+`dev-reload.sh` watches project files and restarts the app when something changes.
+
+## Run
+
 ```bash
 ./gradlew run
+```
+
+## Live Reload During Development
+
+Plain Swing cannot hot-swap every Java code change inside an already running window. For all-file live reload during development, use the dev reload script:
+
+```bash
+./scripts/dev-reload.sh
+```
+
+This watches the project files and restarts the app when something changes, including Java source files, resources, Gradle files, and README changes. It ignores generated folders like `.git`, `.gradle`, `build`, `app/build`, and `app/bin`.
+
+## Test
+
+```bash
+./gradlew test
 ```

@@ -1,30 +1,22 @@
 package org.example;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.SwingUtilities;
+import org.example.config.AppConfig;
+import org.example.controller.MainController;
+import org.example.model.AppState;
+import org.example.view.MainWindow;
 
 public class App {
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(App::createUI);
+    public String getGreeting() {
+        return AppConfig.load().getNotificationMessage();
     }
 
-    private static void createUI() {
-        JFrame frame = new JFrame("My Swing App");
-
-        JLabel label = new JLabel("Hello Swing 👋", SwingConstants.CENTER);
-
-        JButton button = new JButton("Click me");
-        button.addActionListener(e ->
-                label.setText("Button clicked!")
-        );
-
-        frame.setLayout(new BorderLayout());
-        frame.add(label, BorderLayout.CENTER);
-        frame.add(button, BorderLayout.SOUTH);
-
-        frame.setSize(400, 250);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            AppState state = new AppState(AppConfig.load());
+            MainWindow window = new MainWindow();
+            MainController controller = new MainController(state, window);
+            controller.start();
+        });
     }
 }
