@@ -19,6 +19,8 @@ app/src/main/java/org/example/
         └── NotificationPanel.java
 
 scripts/
+├── dev-reload.bat
+├── dev-reload.ps1
 └── dev-reload.sh
 ```
 
@@ -52,13 +54,15 @@ Contains Swing UI code only.
 
 `MainWindow.java` owns the main application window.
 
-`components/NotificationPanel.java` is a reusable Swing panel that renders a bottom-left popup-style notification with a header, message body, and color.
+`components/NotificationPanel.java` is a reusable Swing panel that renders a bottom-right overlay notification with a header, message body, color, and countdown.
 
 ### `scripts/`
 
 Contains development helper scripts.
 
-`dev-reload.sh` watches project files and restarts the app when something changes.
+`dev-reload.sh` watches project files and restarts the app when something changes on Linux, macOS, or WSL.
+
+`dev-reload.bat` does the same for Windows users.
 
 ## Run
 
@@ -70,8 +74,16 @@ Contains development helper scripts.
 
 Plain Swing cannot hot-swap every Java code change inside an already running window. For all-file live reload during development, use the dev reload script:
 
+Linux, macOS, or WSL:
+
 ```bash
 ./scripts/dev-reload.sh
+```
+
+Windows:
+
+```bat
+scripts\dev-reload.bat
 ```
 
 This watches the project files and restarts the app when something changes, including Java source files, resources, Gradle files, and README changes. It ignores generated folders like `.git`, `.gradle`, `build`, `app/build`, and `app/bin`.
