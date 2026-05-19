@@ -3,8 +3,14 @@
  */
 package org.example;
 
-// import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
 
-// import org.junit.Test;
+import org.junit.Test;
 
-public class AppTest {}
+public class AppTest {
+
+  @Test
+  public void testExample() {
+    assertEquals(2, 1 + 1);
+  }
+}
