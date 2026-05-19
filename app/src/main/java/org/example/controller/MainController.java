@@ -13,17 +13,13 @@ public class MainController {
   }
 
   public void start() {
-    window.onButtonClicked(this::handleButtonClicked);
-    render();
+    state.addObserver(window);
+    window.onLoginSubmitted(this::handleLoginSubmitted);
+    window.onStateChanged(state);
     window.show();
   }
 
-  private void handleButtonClicked() {
-    state.markButtonClicked();
-    render();
-  }
-
-  private void render() {
-    window.render(state);
+  private void handleLoginSubmitted() {
+    state.login(window.getUsername(), window.getPassword());
   }
 }

@@ -2,13 +2,12 @@ package org.example.view.components;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import javax.swing.border.EmptyBorder;
+import org.example.view.config.ViewTheme;
 
 public class NotificationPanel extends JPanel {
   private final JLabel headerLabel;
@@ -38,15 +37,15 @@ public class NotificationPanel extends JPanel {
   }
 
   private void build() {
-    setLayout(new BorderLayout(0, 6));
-    setPreferredSize(new Dimension(260, 112));
+    setLayout(new BorderLayout(0, ViewTheme.SPACE_2));
+    setPreferredSize(ViewTheme.NOTIFICATION_SIZE);
     setVisible(false);
     setBorder(
         BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(255, 255, 255, 80)),
-            new EmptyBorder(12, 14, 12, 14)));
+            BorderFactory.createLineBorder(ViewTheme.NOTIFICATION_BORDER),
+            ViewTheme.NOTIFICATION_PADDING));
 
-    headerLabel.setForeground(Color.WHITE);
+    headerLabel.setForeground(ViewTheme.TEXT_ON_COLOR);
     headerLabel.setFont(headerLabel.getFont().deriveFont(Font.BOLD, 14f));
 
     messageText.setOpaque(false);
@@ -54,10 +53,10 @@ public class NotificationPanel extends JPanel {
     messageText.setFocusable(false);
     messageText.setLineWrap(true);
     messageText.setWrapStyleWord(true);
-    messageText.setForeground(new Color(235, 245, 255));
+    messageText.setForeground(ViewTheme.TEXT_ON_COLOR_MUTED);
     messageText.setFont(messageText.getFont().deriveFont(12f));
 
-    countdownLabel.setForeground(new Color(219, 234, 254));
+    countdownLabel.setForeground(ViewTheme.ACCENT);
     countdownLabel.setFont(countdownLabel.getFont().deriveFont(Font.BOLD, 11f));
 
     add(headerLabel, BorderLayout.NORTH);

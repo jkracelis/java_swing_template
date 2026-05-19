@@ -1,6 +1,6 @@
 # Java Swing Desktop App Structure
 
-This project is a Java Swing desktop application organized with a common desktop app structure. The goal is to keep startup, configuration, state, event handling, and UI code separated so the project stays easier to grow.
+This project is a Java Swing desktop application organized with MVC and the observer pattern. The goal is to keep startup, configuration, state, business logic, event handling, and UI code separated so the project stays easier to grow.
 
 ## Folder Structure
 
@@ -12,9 +12,12 @@ app/src/main/java/org/example/
 ├── controller/
 │   └── MainController.java
 ├── model/
-│   └── AppState.java
+│   ├── AppState.java
+│   └── AppStateObserver.java
 └── view/
     ├── MainWindow.java
+    ├── config/
+    │   └── ViewTheme.java
     └── components/
         └── NotificationPanel.java
 
@@ -38,19 +41,21 @@ The application entry point. It creates the main app objects and starts the Swin
 
 Contains direct application defaults and configuration values.
 
-`AppConfig.java` currently defines the window title, button text, notification header, notification message, and notification color directly in Java.
+`AppConfig.java` currently defines app-level settings like window title, window size, login button text, notification copy, and sample login credentials directly in Java.
 
 ### `model/`
 
-Stores application state.
+Stores application state and business logic.
 
-`AppState.java` keeps the current UI state, such as the active notification header, message, color, and loaded config values.
+`AppState.java` validates login attempts, keeps the current login state, and notifies observers when state changes.
+
+`AppStateObserver.java` defines the observer contract used by the view.
 
 ### `controller/`
 
-Connects the UI and state.
+Connects the UI and model.
 
-`MainController.java` handles user actions, updates the model, and tells the view to render.
+`MainController.java` handles user actions from the view and calls model methods. It does not contain login business rules.
 
 ### `view/`
 
@@ -58,7 +63,29 @@ Contains Swing UI code only.
 
 `MainWindow.java` owns the main application window.
 
+`config/ViewTheme.java` stores shared UI design tokens like `PRIMARY`, `SECONDARY`, `MUTED`, `ACCENT`, `DESTRUCTIVE`, spacing steps, padding helpers, and notification sizing. It works like a small Swing version of Sass variables or Tailwind theme values.
+
 `components/NotificationPanel.java` is a reusable Swing panel that renders a bottom-right overlay notification with a header, message body, color, and countdown.
+
+## MVC and Observer Flow
+
+The sample login uses this flow:
+
+```text
+View button click
+→ Controller reads username/password from the view
+→ Controller calls AppState.login(...)
+→ Model validates credentials
+→ Model notifies observers
+→ View receives AppState and re-renders
+```
+
+Sample credentials:
+
+```text
+username: admin
+password: root
+```
 
 ### `scripts/`
 
