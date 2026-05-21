@@ -2,7 +2,7 @@ package org.example.view.config;
 
 import java.awt.Color;
 
-public final class ViewTheme {
+public final class Theme {
 
   public static final Color PRIMARY = new Color(37, 99, 235);
   public static final Color SECONDARY = new Color(22, 163, 74);
