@@ -1,6 +1,6 @@
 # Java Swing Desktop App Structure
 
-This project is a Java Swing desktop application organized with MVC and the observer pattern. The goal is to keep startup, configuration, state, business logic, event handling, and UI code separated so the project stays easier to grow.
+This project is a Java Swing desktop application. The goal is to keep startup, configuration, state, business logic, event handling, and UI code separated so the project stays easier to grow.
 
 ## Folder Structure
 
@@ -8,12 +8,17 @@ This project is a Java Swing desktop application organized with MVC and the obse
 app/src/main/java/org/example/
 ├── App.java
 ├── config/
+├── database/
+├── middleware/
 ├── controller/
+├── service/
+├── dao/
 ├── model/
+├── utils/
 └── view/
     ├── MainWindow.java
     ├── config/
-    │   └── ViewTheme.java
+    │   └── Theme.java
     └── components/
 
 scripts/
@@ -31,69 +36,116 @@ scripts/
 ### `App.java`
 Entry point of the app.
 - Starts Swing UI thread
-- Initializes config, view, model, controller
+- Initializes config, database, view, model, controller, services, and DAOs
+- Connects dependencies (Dependency Injection)
 - No business logic
 
 ---
 
 ### `config/`
 App-wide settings (constants).
-
 - Window size
-- Title
-- Default behavior
+- App constants and property file loaders
+- Default application behavior
+
+---
+
+### `database/`
+Database configuration and connection management.
+- Manages connection pools or singletons (e.g., SQLite, H2, or MySQL connection instances)
+- Handles startup database initialization and schema migration scripts
+- Provides connection objects to the **DAO** layer
+
+---
+
+### `middleware/`
+Interceptors and pre-processors.
+- Sits between layers to intercept actions
+- Handles cross-cutting concerns like input validation, logging, and application-level authentication
+- Blocks unauthorized or invalid actions before they reach the Controller or Service
 
 ---
 
 ### `controller/`
-Handles user actions and app logic.
+Handles user interaction events.
+- Receives UI events directly from the View
+- Calls the appropriate **Service** to process data
+- Keeps Swing UI thread actions isolated from heavy processing
 
-- Receives input from View
-- Updates Model
-- Acts as bridge between View and Model
+---
+
+### `service/`
+Holds the core business logic.
+- Coordinates data retrieval and manipulation
+- Calls **DAOs** to fetch or persist data
+- Combines multiple data operations into single logical actions (Transactions)
+- Completely independent of the Swing UI code
+
+---
+
+### `dao/` (Data Access Object)
+Handles database and file system communication.
+- Contains direct SQL queries, JPA operations, or File I/O logic
+- Leverages the **database** folder to obtain active connection objects
+- Abstracts data storage implementation details away from the Service layer
+- Returns clean **Model** blueprints to the upper layers
 
 ---
 
 ### `model/`
-Holds application state.
+Holds application state and data blueprints.
+- Defines data structures mapping directly to database tables or files
+- Holds application-wide memory state
+- Supports Observer updates to notify the View when data changes
 
-- App data / state
-- Business rules
-- Supports Observer updates
+---
+
+### `utils/`
+Global utility classes and helper functions.
+- Contains reusable, standalone tools used across multiple layers
+- Examples: String manipulators, date/time formatters, custom cryptography tools, file parsers
 
 ---
 
 ### `view/`
 All UI (Swing components).
-
-- Renders UI
-- Shows model data
-- Sends events to controller
+- Renders the UI visually
+- Shows model data by observing state changes
+- Sends raw user interactions (button clicks, key presses) to the Controller
 
 ---
 
 #### `view/MainWindow.java`
-Main JFrame and layout.
+Main JFrame and layout structure.
 
 ---
 
 #### `view/components/`
-Reusable UI components.
+Reusable UI components (custom buttons, tables, panels).
 
 ---
 
-#### `view/config/ViewTheme.java`
+#### `view/config/Theme.java`
 UI styling (colors, fonts, spacing).
 
 ---
 
 ## Flow
-User → View → Controller → Model → View
+```text
+User → View → [Middleware] → Controller → Service → DAO → Database/File
+                                           │        ▲
+                                           │        └─ (Gets Connection from Database Config)
+                                           ▼
+                                         Model (Updates State)
+                                           │
+                                           ▼ (via Observer Pattern)
+                                         View (Renders Change)
+```
+*(Note: **Utils** can be called globally by any layer that requires independent helper functions).*
 
-
+---
 
 ### `scripts/`
-
 Contains development helper scripts.
 
 `dev-reload.sh` watches project files and restarts the app when something changes on Linux, macOS, or WSL.
@@ -101,7 +153,6 @@ Contains development helper scripts.
 `dev-reload.bat` does the same for Windows users.
 
 ### `.github/workflows/`
-
 Contains GitHub Actions workflows.
 
 `build.yml` runs the Gradle build and tests on Linux, Windows, and macOS.
