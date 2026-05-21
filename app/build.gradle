@@ -53,3 +53,10 @@ spotless {
         endWithNewline()
     }
 }
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'org.example.App'
+    }
+}
+
